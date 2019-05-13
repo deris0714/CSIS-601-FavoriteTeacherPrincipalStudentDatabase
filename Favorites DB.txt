@@ -1,0 +1,461 @@
+-- phpMyAdmin SQL Dump
+-- version 4.7.3
+-- https://www.phpmyadmin.net/
+--
+-- Host: localhost:3306
+-- Generation Time: Apr 08, 2018 at 06:35 PM
+-- Server version: 5.6.36-82.1-log
+-- PHP Version: 5.6.30
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Database: `sarahd16_favorites`
+--
+
+DELIMITER $$
+--
+-- Procedures
+--
+CREATE DEFINER=`sarahd16`@`localhost` PROCEDURE `getOneStudentsFavs` (IN `stuid` INT(11))  BEGIN
+Select sft.studentname 'sname', sft.teachername 'tname',s.gender 'sgender'  , t.gender 'tgender', t.subject, t.coursename, s.gpa, sft.why   
+From StudentFavTeachers sft 
+INNER JOIN Students s on s.id=sft.studentid 
+INNER JOIN Teachers t on sft.teacherid=t.id
+WHERE s.id = stuid;
+END$$
+
+--
+-- Functions
+--
+CREATE DEFINER=`sarahd16`@`localhost` FUNCTION `getNumberOf5StarRatings` (`id` INT(11)) RETURNS INT(11) BEGIN
+	DECLARE counted INT(11);
+		SELECT COUNT(*) INTO counted
+        FROM StudentFavTeachers 
+        WHERE teacherid= id  
+        	AND stars=5;
+    RETURN counted;
+END$$
+
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `inacprin`
+-- (See below for the actual view)
+--
+CREATE TABLE `inacprin` (
+`name` varchar(255)
+,`gender` varchar(255)
+,`salary` int(11)
+);
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `inacschool`
+-- (See below for the actual view)
+--
+CREATE TABLE `inacschool` (
+`schoolname` varchar(255)
+,`district` varchar(255)
+,`state` varchar(2)
+);
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `inacstu`
+-- (See below for the actual view)
+--
+CREATE TABLE `inacstu` (
+`name` varchar(255)
+,`gpa` float
+,`gender` varchar(255)
+);
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `inacteach`
+-- (See below for the actual view)
+--
+CREATE TABLE `inacteach` (
+`name` varchar(255)
+,`gender` varchar(255)
+,`subject` varchar(255)
+,`salary` int(11)
+);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `Principals`
+--
+
+CREATE TABLE `Principals` (
+  `type` varchar(255) NOT NULL DEFAULT 'Principal ',
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL DEFAULT '',
+  `department` varchar(255) DEFAULT NULL,
+  `gender` varchar(255) NOT NULL,
+  `salary` int(11) DEFAULT NULL,
+  `active` varchar(5) NOT NULL DEFAULT 'YES'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `Principals`
+--
+
+INSERT INTO `Principals` (`type`, `id`, `name`, `department`, `gender`, `salary`, `active`) VALUES
+('Principal ', 1, 'James Gaskins', 'Mathematics and Business', 'Male', 78000, 'NO'),
+('Principal ', 2, 'Heather Ducker', 'History', 'Female', 78500, 'YES'),
+('Principal ', 4, 'Jim Haynes', 'English', 'Male', 80000, 'YES'),
+('Principal ', 5, 'Tammy Tones', 'Arts', 'Female', 75000, 'YES'),
+('Principal ', 6, 'Holly Holmes', 'Athletics', 'Female', 75000, 'YES');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `Schools`
+--
+
+CREATE TABLE `Schools` (
+  `type` varchar(255) NOT NULL DEFAULT 'School',
+  `id` int(255) NOT NULL,
+  `schoolname` varchar(255) NOT NULL DEFAULT '',
+  `district` varchar(255) DEFAULT NULL,
+  `address` varchar(255) NOT NULL,
+  `city` varchar(255) DEFAULT NULL,
+  `zipcode` varchar(5) NOT NULL,
+  `state` varchar(2) NOT NULL,
+  `active` varchar(5) NOT NULL DEFAULT 'YES'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `Schools`
+--
+
+INSERT INTO `Schools` (`type`, `id`, `schoolname`, `district`, `address`, `city`, `zipcode`, `state`, `active`) VALUES
+('School', 1, 'Goose Creek High School', 'Berkeley County School District', '1137 Red Bank Rd.', 'Goose Creek', '29445', 'SC', 'YES'),
+('School', 2, 'Knightsville Elementary School', 'Dorchester District II School District', '847 Orangeburg Rd', 'Summerville', '29483', 'SC', 'NO'),
+('School', 4, 'Stratford High School', 'Berkeley County School District', '951 Crowfield Blv', 'Goose Creek', '29445', 'SC', 'YES'),
+('School', 3, 'Summerville High School', 'Dorchester District II School District', '1101 Boonehill Rd', 'Summerville', '29483', 'SC', 'YES');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `StudentFavTeachers`
+--
+
+CREATE TABLE `StudentFavTeachers` (
+  `studentid` int(11) NOT NULL,
+  `studentname` varchar(255) DEFAULT NULL,
+  `teacherid` int(11) NOT NULL,
+  `teachername` varchar(255) DEFAULT NULL,
+  `schoolname` varchar(255) DEFAULT NULL,
+  `yeartaken` int(11) DEFAULT NULL,
+  `stars` int(11) NOT NULL,
+  `why` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `StudentFavTeachers`
+--
+
+INSERT INTO `StudentFavTeachers` (`studentid`, `studentname`, `teacherid`, `teachername`, `schoolname`, `yeartaken`, `stars`, `why`) VALUES
+(1, 'Sally Hansen', 1, 'Stephanie Wonder', 'Goose Creek High School', 2013, 4, 'She loves her students'),
+(2, 'Ashleigh Deris', 2, 'Michael Jackson', 'Summerville High School', 2003, 5, 'He is a great dancer!'),
+(2, 'Ashleigh Deris', 3, 'Teddy Rose', 'Stratford High School', 2008, 5, 'I had him senior year and he let us have a mock election.'),
+(3, 'John Smith', 3, 'Teddy Rose', 'Stratford High School', 2006, 4, 'He is great at explaining boring concepts'),
+(5, 'Carly Marly', 3, 'Teddy Rose', 'Stratford High School', 2010, 5, 'I hate History, but Mr. Rose always made it fun!'),
+(5, 'Carly Marly', 4, 'Shonda Rhimes', 'Goose Creek High School', 2011, 4, 'She is so creative and everyday something new and fun happens.'),
+(6, 'Billy John', 6, 'Penn Poe', 'Stratford High School', 2006, 4, 'He THE BEST English Teacher');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `Students`
+--
+
+CREATE TABLE `Students` (
+  `type` varchar(255) NOT NULL DEFAULT 'Student',
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL DEFAULT '',
+  `gradelevel` int(11) DEFAULT NULL,
+  `gpa` float DEFAULT NULL,
+  `gender` varchar(255) NOT NULL,
+  `active` varchar(5) NOT NULL DEFAULT 'YES'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `Students`
+--
+
+INSERT INTO `Students` (`type`, `id`, `name`, `gradelevel`, `gpa`, `gender`, `active`) VALUES
+('Student', 1, 'Sally Hansen', 11, 3.56, 'Female', 'YES'),
+('Student', 2, 'Ashleigh Deris', 11, 4.2, 'Female', 'YES'),
+('Student', 3, 'John Smith', 7, 3.2, 'Male', 'YES'),
+('Student', 4, 'Jimmy John', 9, 2.9, 'Male', 'NO'),
+('Student', 5, 'Carly Marly', 7, 3.25, 'Female', 'YES'),
+('Student', 6, 'Billy John', 12, 2.34, 'Male', 'YES'),
+('Student', 7, 'Elvis Peasley', 10, 2, 'Male', 'YES'),
+('Student', 15, 'Mallory Smith', 11, 4, 'Female', 'YES'),
+('Student', 16, 'Jimmy Ponds', 11, 4, 'Male', 'YES');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `TeacherFavPrincipal`
+--
+
+CREATE TABLE `TeacherFavPrincipal` (
+  `teacherid` int(11) NOT NULL,
+  `teachername` varchar(255) DEFAULT NULL,
+  `principalid` int(11) NOT NULL,
+  `principalname` varchar(255) DEFAULT NULL,
+  `schoolname` varchar(255) DEFAULT NULL,
+  `yearrecordmade` int(4) NOT NULL,
+  `why` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `TeacherFavPrincipal`
+--
+
+INSERT INTO `TeacherFavPrincipal` (`teacherid`, `teachername`, `principalid`, `principalname`, `schoolname`, `yearrecordmade`, `why`) VALUES
+(2, 'Michael Jackson', 1, 'James Gaskins', 'Goose Creek High School', 2007, 'He brings us snacks when we have been working all day.'),
+(3, 'Teddy Rose', 2, 'Heather Ducker', 'Stratford High School', 2009, 'She signed off on many field trips'),
+(4, 'Shonda Rhimes', 5, 'Tammy Tones', 'Goose Creek High School', 2001, 'She spread the budget to make sure every department had sufficient funds.'),
+(5, 'Sarah Deris', 1, 'James Gaskins', 'Goose Creek High School', 2016, 'He supported me when some troubled students were disrupting the classroom ALL THE TIME.'),
+(7, 'Sarah Hudson', 6, 'Holly Holmes', 'Summerville High School', 2005, 'She kept a good repore with PE teachers and Science teachers to allow the lessons to come together and make science active');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `TeacherFavStudents`
+--
+
+CREATE TABLE `TeacherFavStudents` (
+  `teacherid` int(11) NOT NULL,
+  `teachername` varchar(255) DEFAULT NULL,
+  `studentid` int(11) NOT NULL,
+  `studentname` varchar(255) DEFAULT NULL,
+  `schoolname` varchar(255) NOT NULL,
+  `yearhad` int(11) DEFAULT NULL,
+  `why` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `TeacherFavStudents`
+--
+
+INSERT INTO `TeacherFavStudents` (`teacherid`, `teachername`, `studentid`, `studentname`, `schoolname`, `yearhad`, `why`) VALUES
+(1, 'Stephanie Wonder', 1, 'Sally Hansen', 'Goose Creek High School', 2012, 'She works harder than any student I have had'),
+(2, 'Michael Jackson', 1, 'Sally Hansen', 'Summerville High School', 2014, 'You can tell she always practices outside of school.'),
+(2, 'Michael Jackson', 2, 'Ashleigh Deris', 'Goose Creek High School', 2007, 'She did not really have any rhythm but she persevered and always had a smile on her face.'),
+(3, 'Teddy Rose', 3, 'John Smith', 'Stratford High School', 2008, 'He had the best attitude and the best projects.'),
+(4, 'Shonda Rhimes', 2, 'Ashleigh Deris', 'Goose Creek High School', 2006, 'She was very passionate!'),
+(5, 'Sarah Deris', 2, 'Ashleigh Deris', 'Goose Creek High School', 2007, 'You could tell that she came to work everyday she walked in the classroom. She was a great role model for the other students.  ');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `Teachers`
+--
+
+CREATE TABLE `Teachers` (
+  `type` varchar(255) NOT NULL DEFAULT 'Teacher',
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL DEFAULT '',
+  `subject` varchar(255) DEFAULT NULL,
+  `coursename` varchar(255) DEFAULT NULL,
+  `gender` varchar(255) NOT NULL,
+  `salary` int(11) DEFAULT NULL,
+  `active` varchar(5) NOT NULL DEFAULT 'YES'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `Teachers`
+--
+
+INSERT INTO `Teachers` (`type`, `id`, `name`, `subject`, `coursename`, `gender`, `salary`, `active`) VALUES
+('Teacher', 1, 'Stephanie Wonder', 'Math', 'Algebra II', 'Female', 36000, 'NO'),
+('Teacher', 2, 'Michael Jackson', 'Dance', 'Dance III', 'Male', 45000, 'YES'),
+('Teacher', 3, 'Teddy Rose', 'History', 'Global Studies I', 'Male', 45000, 'YES'),
+('Teacher', 4, 'Shonda Rhimes', 'Theater', 'Drama II', 'Female', 40000, 'YES'),
+('Teacher', 5, 'Sarah Deris', 'Mathematics', 'Algebra II', 'Female', 32000, 'YES'),
+('Teacher', 6, 'Penn Poe', 'English', 'British Literature ', 'Male', 39000, 'YES'),
+('Teacher', 7, 'Sarah Hudson', 'Science', 'Chemistry ', 'Female', 50000, 'YES'),
+('Teacher', 8, 'Johny Cash', 'Business', 'Finance I', 'Male', 47000, 'YES'),
+('Teacher', 9, 'Kurt Kohler', 'Mathematics', 'Statistics', 'Male', 49000, 'YES'),
+('Teacher', 15, 'Nicole Davis', 'Mathematics', 'AlgebraII', 'Female', 45000, 'YES');
+
+--
+-- Triggers `Teachers`
+--
+DELIMITER $$
+CREATE TRIGGER `money` BEFORE INSERT ON `Teachers` FOR EACH ROW BEGIN
+SET NEW.salary = NEW.salary +2000;
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `inacprin`
+--
+DROP TABLE IF EXISTS `inacprin`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`sarahd16`@`localhost` SQL SECURITY DEFINER VIEW `inacprin`  AS  select `Principals`.`name` AS `name`,`Principals`.`gender` AS `gender`,`Principals`.`salary` AS `salary` from `Principals` where (`Principals`.`active` = 'NO') ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `inacschool`
+--
+DROP TABLE IF EXISTS `inacschool`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`sarahd16`@`localhost` SQL SECURITY DEFINER VIEW `inacschool`  AS  select `Schools`.`schoolname` AS `schoolname`,`Schools`.`district` AS `district`,`Schools`.`state` AS `state` from `Schools` where (`Schools`.`active` = 'NO') ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `inacstu`
+--
+DROP TABLE IF EXISTS `inacstu`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`sarahd16`@`localhost` SQL SECURITY DEFINER VIEW `inacstu`  AS  select `Students`.`name` AS `name`,`Students`.`gpa` AS `gpa`,`Students`.`gender` AS `gender` from `Students` where (`Students`.`active` = 'NO') ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `inacteach`
+--
+DROP TABLE IF EXISTS `inacteach`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`sarahd16`@`localhost` SQL SECURITY DEFINER VIEW `inacteach`  AS  select `Teachers`.`name` AS `name`,`Teachers`.`gender` AS `gender`,`Teachers`.`subject` AS `subject`,`Teachers`.`salary` AS `salary` from `Teachers` where (`Teachers`.`active` = 'NO') ;
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `Principals`
+--
+ALTER TABLE `Principals`
+  ADD PRIMARY KEY (`id`,`name`);
+
+--
+-- Indexes for table `Schools`
+--
+ALTER TABLE `Schools`
+  ADD PRIMARY KEY (`schoolname`),
+  ADD UNIQUE KEY `id` (`id`);
+
+--
+-- Indexes for table `StudentFavTeachers`
+--
+ALTER TABLE `StudentFavTeachers`
+  ADD UNIQUE KEY `studentid` (`studentid`,`teacherid`),
+  ADD KEY `schoolname` (`schoolname`),
+  ADD KEY `studentid_2` (`studentid`,`studentname`),
+  ADD KEY `teacherid` (`teacherid`,`teachername`);
+
+--
+-- Indexes for table `Students`
+--
+ALTER TABLE `Students`
+  ADD PRIMARY KEY (`id`,`name`);
+
+--
+-- Indexes for table `TeacherFavPrincipal`
+--
+ALTER TABLE `TeacherFavPrincipal`
+  ADD UNIQUE KEY `principal1` (`teacherid`,`principalid`),
+  ADD KEY `schoolname` (`schoolname`),
+  ADD KEY `teacherid` (`teacherid`,`teachername`),
+  ADD KEY `principalid` (`principalid`,`principalname`);
+
+--
+-- Indexes for table `TeacherFavStudents`
+--
+ALTER TABLE `TeacherFavStudents`
+  ADD UNIQUE KEY `teacherid` (`teacherid`,`studentid`),
+  ADD KEY `schoolname` (`schoolname`),
+  ADD KEY `studentid_2` (`studentid`,`studentname`),
+  ADD KEY `teacherid_2` (`teacherid`,`teachername`);
+
+--
+-- Indexes for table `Teachers`
+--
+ALTER TABLE `Teachers`
+  ADD PRIMARY KEY (`id`,`name`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `Principals`
+--
+ALTER TABLE `Principals`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+--
+-- AUTO_INCREMENT for table `Schools`
+--
+ALTER TABLE `Schools`
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+--
+-- AUTO_INCREMENT for table `Students`
+--
+ALTER TABLE `Students`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+--
+-- AUTO_INCREMENT for table `Teachers`
+--
+ALTER TABLE `Teachers`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `StudentFavTeachers`
+--
+ALTER TABLE `StudentFavTeachers`
+  ADD CONSTRAINT `StudentFavTeachers_ibfk_3` FOREIGN KEY (`schoolname`) REFERENCES `Schools` (`schoolname`),
+  ADD CONSTRAINT `StudentFavTeachers_ibfk_4` FOREIGN KEY (`studentid`,`studentname`) REFERENCES `Students` (`id`, `name`),
+  ADD CONSTRAINT `StudentFavTeachers_ibfk_5` FOREIGN KEY (`teacherid`,`teachername`) REFERENCES `Teachers` (`id`, `name`);
+
+--
+-- Constraints for table `TeacherFavPrincipal`
+--
+ALTER TABLE `TeacherFavPrincipal`
+  ADD CONSTRAINT `TeacherFavPrincipal_ibfk_3` FOREIGN KEY (`schoolname`) REFERENCES `Schools` (`schoolname`),
+  ADD CONSTRAINT `TeacherFavPrincipal_ibfk_4` FOREIGN KEY (`teacherid`,`teachername`) REFERENCES `Teachers` (`id`, `name`),
+  ADD CONSTRAINT `TeacherFavPrincipal_ibfk_5` FOREIGN KEY (`principalid`,`principalname`) REFERENCES `Principals` (`id`, `name`);
+
+--
+-- Constraints for table `TeacherFavStudents`
+--
+ALTER TABLE `TeacherFavStudents`
+  ADD CONSTRAINT `TeacherFavStudents_ibfk_3` FOREIGN KEY (`schoolname`) REFERENCES `Schools` (`schoolname`),
+  ADD CONSTRAINT `TeacherFavStudents_ibfk_4` FOREIGN KEY (`studentid`,`studentname`) REFERENCES `Students` (`id`, `name`),
+  ADD CONSTRAINT `TeacherFavStudents_ibfk_5` FOREIGN KEY (`teacherid`,`teachername`) REFERENCES `Teachers` (`id`, `name`);
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
